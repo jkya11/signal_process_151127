@@ -1,0 +1,12 @@
+function [ out_signal ] = get_outsignal(signal, processed_window_size, moving_flag, down_sampling_rate, th, out_signal)
+
+    % out_signal = zeros(processed_window_size, 1);
+    for i = 1+moving_flag*processed_window_size:down_sampling_rate:processed_window_size+moving_flag*processed_window_size
+        % mean(signal(i:i+down_sampling_rate-1))
+  
+        if mean(signal(i:i+down_sampling_rate-1)) >= th
+            out_signal(ceil(i/down_sampling_rate)) = 1;
+        else
+            out_signal(ceil(i/down_sampling_rate)) = 0;
+        end
+    end
