@@ -1,6 +1,5 @@
 function [ th ] = get_th(processed_window_size, looking_window_size, moving_flag, signal, down_sampling_rate)
 
-    % get th
     avg = zeros(1, processed_window_size);
     sum = 0;
     count = 0;
