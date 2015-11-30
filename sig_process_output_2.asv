@@ -28,6 +28,7 @@ while moving_flag < last_pos_of_flag
     moving_flag = moving_flag + 1;
 end
 
+
 % print out_signal
 figure(2);
 x_range = 1:processed_window_size;
@@ -38,7 +39,7 @@ plot(x_range, out_signal, 'o');
 answer_signal = zeros(1,processed_window_size);
 
 for i=1:processed_window_size
-    if mod(floor(i),2) == 1
+    if mod(floor((i-1)/10),2) == 0
         answer_signal(i) = 1;
     end
 end
@@ -50,5 +51,5 @@ for i=1:processed_window_size
     end
 end
 
-whole_accuracy = (number_of_correct_samples / processed_window_size)*100;
+whole_accuracy = (number_of_correct_samples / number_of_samples)*100;
 whole_accuracy
