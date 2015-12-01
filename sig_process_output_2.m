@@ -7,7 +7,7 @@ gaussian_sigma = 1;
 
 down_sampling_rate = 10;
 looking_window_size = 100;
-% process_window_size = 1000;
+noise_power = -10; % noise_power has dBW unit
 moving_flag = 0;
 
 processed_window_size = number_of_samples / down_sampling_rate;
@@ -15,6 +15,8 @@ last_pos_of_flag = number_of_samples / processed_window_size;
 
 % signal generation
 signal = signal_generate(number_of_samples, gaussian_sigma);
+gaussian_noise = wgn(1,number_of_samples,noise_power);
+signal = signal + gaussian_noise;
 
 % print signal
 figure_num = 1;
