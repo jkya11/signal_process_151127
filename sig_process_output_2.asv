@@ -1,12 +1,17 @@
-
 close all
 
 % define varibles
-number_of_samples = 10000;
-gaussian_sigma = 1;
+num_samples_from_prev = 0;
+samples_from_prev = zeros(1, num_samples_from_prev);
 
-down_sampling_rate = 10;
-moving_window_size = number_of_samples/100; % fixed
+number_of_samples = 10008;
+gaussian_sigma = 1;
+down_sampling_rate = 20;
+
+num_remain_samples = mod((num_samples_from_prev + number_of_samples), down_sampling_rate);
+number_of_samples = number_of_samples + num_samples_from_prev - num_remain_samples;
+
+% moving_window_size = floor(number_of_samples/10/down_sampling_rate); % fixed
 looking_window_size = 50; % 
 noise_power = -10; % noise_power has dBW unit
 moving_flag = 0;
@@ -14,26 +19,51 @@ moving_flag = 0;
 max_n_samples_to_choose = 3;
 min_n_samples_to_choose = 5;
 
-processed_signal_size = number_of_samples / down_sampling_rate;
-last_pos_of_flag = number_of_samples / processed_signal_size;
+processed_signal_size = floor(number_of_samples / down_sampling_rate);
+last_pos_of_flag = down_sampling_rate;
+
+out_signal = zeros(1, processed_signal_size);
 
 % signal generation
 input_signal = signal_generate(number_of_samples, gaussian_sigma);
 gaussian_noise = wgn(1,number_of_samples,noise_power);
 input_signal = input_signal + gaussian_noise;
 
+% send remainder signal to next loop
+remain_samples = input_signal(end-(num_remain_samples-1):end);
+
 % print signal
 figure_num = 1;
 print_signal(input_signal, number_of_samples, figure_num);
 
+% main process -----------------------------------------------
+% th = zeros(1, 10);
+% while moving_flag < last_pos_of_flag
+%     th(moving_flag+1) = get_th(moving_window_size, looking_window_size, moving_flag, input_signal, down_sampling_rate, max_n_samples_to_choose, min_n_samples_to_choose);
+%     moving_flag = moving_flag + 1;
+% end
+% 
+% out_signal = get_outsignal(input_signal, processed_signal_size, moving_flag, down_sampling_rate, th, out_signal);
 
-
-% main process
-while moving_flag < last_pos_of_flag
-    th = get_th(moving_window_size, looking_window_size, moving_flag, input_signal, down_sampling_rate, max_n_samples_to_choose, min_n_samples_to_choose);
-    out_signal = get_outsignal(input_signal, processed_signal_size, moving_flag, down_sampling_rate, th, out_signal);
-    moving_flag = moving_flag + 1;
+for i=1:processed_signal_size
+%     if mod(i, looking_window_size) == 1
+%         if i*down_sampling_rate + down_sampling_rate*looking_window_size <= number_of_samples
+%             th = mean(input_signal(i*down_sampling_rate:i*down_sampling_rate+down_sampling_rate*looking_window_size));
+%         else
+%             th = mean(input_signal(end:end-(down_sampling_rate*looking_window_size-1)));
+%         end
+%     end
+    
+    
+    th = ;
+    if mean(input_signal(down_sampling_rate*(i-1)+1:down_sampling_rate*i)) >= th
+        out_signal(i) = 1;
+    else
+        out_signal(i) = 0;
+    end
 end
+
+%--------------------------------------------------------------
 
 % print out_signal
 figure(2);
